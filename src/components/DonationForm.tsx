@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Charity } from '../types/Charity';
 import { Connection, Transaction, SystemProgram, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js" 
 import toast from 'react-hot-toast';
+import { useUserStore } from '../store/userStore';
+import { handleUserInFirebase, updateUserDonation } from '../services/service';
 
 type Props = {
   charities: Charity[];
@@ -13,6 +15,7 @@ window.Buffer = buffer.Buffer;
 const connection = new Connection("https://api.devnet.solana.com");
 
 const DonationForm = ({ charities }: Props) => {
+  const {setPublicKey} = useUserStore()
   const [isConnected, setIsConnected] = useState(false);
   const [donationAmount, setDonationAmount] = useState(0);
   const [selectedCharity, setSelectedCharity] = useState('');
@@ -28,7 +31,8 @@ const DonationForm = ({ charities }: Props) => {
           try {
             const response = await solana.connect({ onlyIfTrusted: true });
             setIsConnected(true);
-            console.log('Connected with Public Key:', response.publicKey.toString());
+            setPublicKey(response.publicKey.toString())
+            await handleUserInFirebase(response.publicKey.toString()); 
           } catch (err) {
             console.error('Wallet connection error:', err);
           }
@@ -49,6 +53,7 @@ const DonationForm = ({ charities }: Props) => {
     try {
       const response = await provider.connect();
       setIsConnected(true);
+      setPublicKey(response.publicKey.toString())
       console.log('Connected with Public Key:', response.publicKey.toString());
     } catch (err) {
       console.error('Connection error:', err);
@@ -89,9 +94,10 @@ const DonationForm = ({ charities }: Props) => {
       console.log("Transaction sent with signature:", signature);
       
       toast.success(`Donated ${donationAmount} SOL to ${selectedCharity}`);
+      console.log("key:",signature.publicKey)
+      await updateUserDonation(signature.publicKey, donationAmount); // Update user's total donation in Firebase
       setDonationAmount(0);
       setSelectedCharity('');
-
     } catch (error) {
       console.error("Transaction failed:", error);
       toast.error("Transaction failed. Please try again.");

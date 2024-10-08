@@ -1,7 +1,7 @@
 export type Charity = {
-    id:number,
+    id:any,
     name:string,
     description:string,
     imageUri:string,
-    walletAddress:string,
+    publicKey:string,
 }
