@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../assets/hopechainlogo.png";
 import { useModalStore } from "../store/modalStore";
 
