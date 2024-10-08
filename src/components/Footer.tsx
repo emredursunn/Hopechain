@@ -11,7 +11,7 @@ const Footer = () => {
           <a className="text-xs hover:underline underline-offset-4" href="#">
             Privacy
           </a>
-          <a className="text-xs hover:underline underline-offset-4" href="#">
+          <a className="text-xs hover:underline underline-offset-4" href="https://github.com/emredursunn/Hopechain" target="_blank">
             <Github className="h-4 w-4 inline-block mr-1" />
             GitHub
           </a>
